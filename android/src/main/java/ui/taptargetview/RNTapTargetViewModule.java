@@ -4,7 +4,9 @@ package ui.taptargetview;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.util.Log;
+import android.view.View;
 
 import com.facebook.common.internal.Objects;
 import com.facebook.react.bridge.Promise;
@@ -46,6 +48,10 @@ public class RNTapTargetViewModule extends ReactContextBaseJavaModule {
 
       for (int i = 0;i < views.size();i++) {
           int view = views.getInt(i);
+          View view99 = activity.findViewById(view);
+
+          if (view99 == null) return;
+
           targetViews.add(this.generateTapTarget(view, props.getMap(String.valueOf(view))));
       }
 
@@ -63,6 +69,11 @@ public class RNTapTargetViewModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void ShowFor(final int view, final ReadableMap props, final Promise promise) {
       final Activity activity = this.getCurrentActivity();
+
+      View view99 = activity.findViewById(view);
+
+      if (view99 == null) return;
+
       final TapTarget targetView = generateTapTarget(view, props);
 
       this.getCurrentActivity().runOnUiThread(new Runnable() {
@@ -94,7 +105,7 @@ public class RNTapTargetViewModule extends ReactContextBaseJavaModule {
       try { textColor = activity.getResources().getIdentifier(props.getString("textColor"), "color", activity.getPackageName()); } catch (Exception e) {}
       try { dimColor = activity.getResources().getIdentifier(props.getString("dimColor"), "color", activity.getPackageName()); } catch (Exception e) {}
 
-      final int finalOuterCircleColor = outerCircleColor;
+      final int finalOuterCircleColor = Color.parseColor(props.getString("outerCircleColor"));
       final int finalTargetCircleColor = targetCircleColor;
       final int finalTitleTextColor = titleTextColor;
       final int finalDescriptionTextColor = descriptionTextColor;
@@ -133,7 +144,7 @@ public class RNTapTargetViewModule extends ReactContextBaseJavaModule {
       //Populate Props
       TapTarget targetView = TapTarget.forView(activity.findViewById(view), title, description);
 
-      if (finalOuterCircleColor != 0) targetView.outerCircleColor(finalOuterCircleColor);
+      if (finalOuterCircleColor != 0) targetView.outerCircleColorInt(finalOuterCircleColor);
       if (finalTargetCircleColor != 0) targetView.targetCircleColor(finalTargetCircleColor);
       if (finalTitleTextColor != 0) targetView.titleTextColor(finalTitleTextColor);
       if (finalDescriptionTextColor != 0) targetView.descriptionTextColor(finalDescriptionTextColor);
